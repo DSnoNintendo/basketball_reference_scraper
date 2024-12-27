@@ -34,7 +34,7 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
             xpath = f"//table[@id='{stat_type}']"
         table = get_selenium_wrapper(f'https://www.basketball-reference.com/{suffix}', xpath)
     if table is None:
-        return pd.DataFrame()
+        return None
     df = pd.read_html(StringIO(table))[0]
     df.rename(columns={'Season': 'SEASON', 'Age': 'AGE',
                 'Tm': 'TEAM', 'Lg': 'LEAGUE', 'Pos': 'POS', 'Awards': 'AWARDS'}, inplace=True)
