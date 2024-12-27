@@ -1,9 +1,10 @@
 import pandas as pd
+import re
 from requests import get
 from bs4 import BeautifulSoup
 from datetime import datetime
 from unidecode import unidecode
-import re
+from io import StringIO
 
 try:
     from utils import get_game_suffix, remove_accents
@@ -45,7 +46,7 @@ def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
         soup = BeautifulSoup(r.content, 'html.parser')
         for selector in selectors:
             table = soup.find('table', { 'id': selector })
-            raw_df = pd.read_html(str(table))[0]
+            raw_df = pd.read_html(StringIO(str(table)))[0]
             df = _process_box(raw_df)
             if team1 in selector:
                 df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team1, date.year))
@@ -96,7 +97,7 @@ def get_all_star_box_score(year: int):
         soup = BeautifulSoup(r.content, 'html.parser')
         team_names = list(map(lambda el: el.text, soup.select('div.section_heading > h2')[1:3]))
         for table in soup.find_all('table')[1:3]:
-            raw_df = pd.read_html(str(table))[0]
+            raw_df = pd.read_html(StringIO(str(table)))[0]
             df = _process_box(raw_df)
             #drop team totals row (always last), totals row
             totals_index = df[df['MP'] == 'Totals'].index[0]

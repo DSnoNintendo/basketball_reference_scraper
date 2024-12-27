@@ -1,5 +1,6 @@
 import pandas as pd
 from bs4 import BeautifulSoup
+from io import StringIO
 
 try:
     from constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
@@ -18,7 +19,7 @@ def get_roster(team, season_end_year):
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', {'id': 'roster'})
-        df = pd.read_html(str(table))[0]
+        df = pd.read_html(StringIO(str(table)))[0]
         df.columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE',
                       'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
         # remove rows with no player name (this was the issue above)
@@ -39,7 +40,7 @@ def get_team_stats(team, season_end_year, data_format='TOTALS'):
     table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
     if not table:
         raise ConnectionError('Request to basketball reference failed')
-    df = pd.read_html(table)[0]
+    df = pd.read_html(StringIO(table))[0]
     opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
     df = df[:opp_idx]
     if data_format == 'TOTALS':
@@ -64,7 +65,7 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
     if not table:
         raise ConnectionError('Request to basketball reference failed')
-    df = pd.read_html(table)[0]
+    df = pd.read_html(StringIO(table))[0]
     opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
     df = df[opp_idx:]
     if data_format == 'TOTALS':
@@ -89,7 +90,7 @@ def get_team_misc(team, season_end_year, data_format='TOTALS'):
     table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
     if not table:
         raise ConnectionError('Request to basketball reference failed')
-    df = pd.read_html(table)[0]
+    df = pd.read_html(StringIO(table))[0]
     if data_format == 'TOTALS':
         row_idx = 'Team'
     elif data_format == 'RANK':
@@ -113,7 +114,7 @@ def get_roster_stats(team: list, season_end_year: int, data_format='PER_GAME', p
         f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
     if not table:
         raise ConnectionError('Request to basketball reference failed')
-    df = pd.read_html(table)[0]
+    df = pd.read_html(StringIO(table))[0]
     df.rename(columns={'Player': 'PLAYER', 'Age': 'AGE',
                 'Tm': 'TEAM', 'Pos': 'POS'}, inplace=True)
     df['PLAYER'] = df['PLAYER'].apply(
@@ -127,7 +128,7 @@ def get_team_ratings(season_end_year: int, team=[]):
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', { 'id': 'ratings' })
     
-        df = pd.read_html(str(table))[0]
+        df = pd.read_html(StringIO(str(table)))[0]
         # Clean columns and indexes
         df = df.droplevel(level=0, axis=1)
         

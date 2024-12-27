@@ -1,6 +1,7 @@
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup
+from io import StringIO
 
 try:
     from utils import get_player_suffix
@@ -34,7 +35,7 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
         table = get_selenium_wrapper(f'https://www.basketball-reference.com/{suffix}', xpath)
     if table is None:
         return pd.DataFrame()
-    df = pd.read_html(table)[0]
+    df = pd.read_html(StringIO(table))[0]
     df.rename(columns={'Season': 'SEASON', 'Age': 'AGE',
                 'Tm': 'TEAM', 'Lg': 'LEAGUE', 'Pos': 'POS', 'Awards': 'AWARDS'}, inplace=True)
     if 'FG.1' in df.columns:
@@ -67,7 +68,7 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', { 'id': selector })
-        df = pd.read_html(str(table))[0]
+        df = pd.read_html(StringIO(str(table)))[0]
         df.rename(columns = {'Date': 'DATE', 'Age': 'AGE', 'Tm': 'TEAM', 'Unnamed: 5': 'HOME/AWAY', 'Opp': 'OPPONENT',
             'Unnamed: 7': 'RESULT', 'GmSc': 'GAME_SCORE', 'Series': 'SERIES' }, inplace=True)
         df['HOME/AWAY'] = df['HOME/AWAY'].apply(lambda x: 'AWAY' if x=='@' else 'HOME')
@@ -94,7 +95,7 @@ def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
         if table:
-            df = pd.read_html(str(table))[0]
+            df = pd.read_html(StringIO(str(table)))[0]
             for i in range(1, len(df['Unnamed: 0_level_0','Split'])):
                 if isinstance(df['Unnamed: 0_level_0','Split'][i], float):
                     df['Unnamed: 0_level_0','Split'][i] = df['Unnamed: 0_level_0','Split'][i-1]

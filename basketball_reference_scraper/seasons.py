@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import datetime
 from bs4 import BeautifulSoup
+from io import StringIO
 
 try:
     from request_utils import get_wrapper
@@ -21,7 +22,7 @@ def get_schedule(season, playoffs=False):
             soup = BeautifulSoup(r.content, 'html.parser')
             table = soup.find('table', attrs={'id': 'schedule'})
             if table:
-                month_df = pd.read_html(str(table))[0]
+                month_df = pd.read_html(StringIO(str(table)))[0]
                 df = pd.concat([df, month_df])
 
     df = df.reset_index()
@@ -79,8 +80,8 @@ def get_standings(date=None):
         e_df = pd.DataFrame(columns =  ['TEAM', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G'])
         w_df = pd.DataFrame(columns =  ['TEAM', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G'])
         if e_table and w_table:
-            e_df = pd.read_html(str(e_table))[0]
-            w_df = pd.read_html(str(w_table))[0]
+            e_df = pd.read_html(StringIO(str(e_table)))[0]
+            w_df = pd.read_html(StringIO(str(w_table)))[0]
             e_df.rename(columns={'Eastern Conference': 'TEAM'}, inplace=True)
             w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
         d['EASTERN_CONF'] = e_df

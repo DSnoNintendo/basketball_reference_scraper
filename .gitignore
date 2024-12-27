@@ -9,5 +9,6 @@ build/
 *.ipynb
 
 .vscode
+.idea
 env
 package_passwords.txt

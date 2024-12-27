@@ -1,6 +1,7 @@
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup
+from io import StringIO
 
 try:
     from constants import TEAM_TO_TEAM_ABBR
@@ -14,7 +15,7 @@ def get_injury_report():
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
-        df = pd.read_html(str(table))[0]
+        df = pd.read_html(StringIO(str(table)))[0]
         df.rename(columns = {'Player': 'PLAYER', 'Team': 'TEAM', 'Update': 'DATE', 'Description': 'DESCRIPTION'}, inplace=True)
         df = df[df['PLAYER'] != 'Player']
         df['TEAM'] = df['TEAM'].apply(lambda x: TEAM_TO_TEAM_ABBR[x.upper()])
