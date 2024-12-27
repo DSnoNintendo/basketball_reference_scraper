@@ -68,8 +68,8 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', { 'id': selector })
-        if not len(str(table)):
-            return None
+        if table is None:
+            return pd.DataFrame()
         df = pd.read_html(StringIO(str(table)))[0]
         df.rename(columns = {'Date': 'DATE', 'Age': 'AGE', 'Tm': 'TEAM', 'Unnamed: 5': 'HOME/AWAY', 'Opp': 'OPPONENT',
             'Unnamed: 7': 'RESULT', 'GmSc': 'GAME_SCORE', 'Series': 'SERIES' }, inplace=True)
