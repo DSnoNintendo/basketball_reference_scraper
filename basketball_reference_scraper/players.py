@@ -12,6 +12,7 @@ except:
     from basketball_reference_scraper.request_utils import get_wrapper, get_selenium_wrapper
     from basketball_reference_scraper.lookup import lookup
 
+
 def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_matches = True):
     name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name)
@@ -81,6 +82,61 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
         return df
     else:
         raise ConnectionError('Request to basketball reference failed')
+
+def get_team_and_opp_stats(team, season_end_year, data_format='TOTALS'):
+    xpath = '//table[@id="team_and_opponent"]'
+    table = get_selenium_wrapper(
+        f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html',
+        xpath
+    )
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+
+    # Read the HTML table
+    df = pd.read_html(StringIO(table))[0]
+
+    # Find where Opponent stats begin
+    opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
+
+    # Split into team portion and opponent portion
+    df_team = df[:opp_idx]
+    df_opp = df[opp_idx:]
+
+    # Map the user's data_format to the correct row labels
+    if data_format == 'TOTALS':
+        team_row = 'Team'
+        opp_row = 'Opponent'
+    elif data_format == 'PER_GAME':
+        team_row = 'Team/G'
+        opp_row = 'Opponent/G'
+    elif data_format == 'RANK':
+        team_row = 'Lg Rank'
+        opp_row = 'Lg Rank'
+    elif data_format == 'YEAR/YEAR':
+        team_row = 'Year/Year'
+        opp_row = 'Year/Year'
+    else:
+        print('Invalid data format')
+        return {}
+
+    # Extract the row containing the team stats
+    s_team = df_team[df_team['Unnamed: 0'] == team_row]
+    s_team = s_team.drop(columns=['Unnamed: 0']).reindex()
+    s_team = pd.Series(index=s_team.columns, data=s_team.values.tolist()[0])
+
+    # Extract the row containing the opponent stats
+    s_opp = df_opp[df_opp['Unnamed: 0'] == opp_row]
+    s_opp = s_opp.drop(columns=['Unnamed: 0']).reindex()
+    s_opp = pd.Series(index=s_opp.columns, data=s_opp.values.tolist()[0])
+
+    # Rename indices to ensure uniqueness in the final Series
+    s_team.index = [f"TEAM_{col}" for col in s_team.index]
+    s_opp.index = [f"OPP_{col}" for col in s_opp.index]
+
+    # Concatenate both Series into one
+    combined_stats = pd.concat([s_team, s_opp])
+
+    return combined_stats
 
 def get_player_headshot(_name, ask_matches=True):
     name = lookup(_name, ask_matches)
