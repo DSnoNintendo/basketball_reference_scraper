@@ -36,6 +36,7 @@ selenium = "^4.27.1"
 html5lib = "^1.1"
 black = "^24.10.0"
 isort = "^5.13.2"
+undetected-chromedriver = "^3.5.5"
 
 
 [build-system]

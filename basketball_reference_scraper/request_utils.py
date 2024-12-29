@@ -5,10 +5,11 @@ from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+import undetected_chromedriver as uc
 
 options = Options()
 options.add_argument('--headless=new')
-driver = webdriver.Chrome(options=options)
+driver = uc.Chrome(options=options)
 last_request = time()
 
 def get_selenium_wrapper(url, xpath):
