@@ -85,27 +85,7 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
-def get_team_and_opp_stats_single_series(team, season_end_year, data_format='TOTALS'):
-    """
-    Retrieves both team and opponent stats from the Basketball Reference
-    'team_and_opponent' table in a single function call, returning them
-    as one combined Series.
-
-    Parameters
-    ----------
-    team : str
-        Abbreviation of the NBA team (e.g., 'LAL' for Los Angeles Lakers).
-    season_end_year : int
-        Year the season ended (e.g., 2023 for the 2022-23 NBA season).
-    data_format : str, optional
-        One of ['TOTALS', 'PER_GAME', 'RANK', 'YEAR/YEAR']. Defaults to 'TOTALS'.
-
-    Returns
-    -------
-    pd.Series
-        A single Pandas Series that combines team stats and opponent stats,
-        with uniquely renamed indices (e.g. "TEAM_FG" and "OPP_FG").
-    """
+def get_team_and_opp_stats(team, season_end_year, data_format='TOTALS'):
     xpath = '//table[@id="team_and_opponent"]'
     table = get_selenium_wrapper(
         f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html',
