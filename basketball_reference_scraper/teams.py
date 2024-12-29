@@ -85,6 +85,82 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
+def get_team_and_opp_stats_single_series(team, season_end_year, data_format='TOTALS'):
+    """
+    Retrieves both team and opponent stats from the Basketball Reference
+    'team_and_opponent' table in a single function call, returning them
+    as one combined Series.
+
+    Parameters
+    ----------
+    team : str
+        Abbreviation of the NBA team (e.g., 'LAL' for Los Angeles Lakers).
+    season_end_year : int
+        Year the season ended (e.g., 2023 for the 2022-23 NBA season).
+    data_format : str, optional
+        One of ['TOTALS', 'PER_GAME', 'RANK', 'YEAR/YEAR']. Defaults to 'TOTALS'.
+
+    Returns
+    -------
+    pd.Series
+        A single Pandas Series that combines team stats and opponent stats,
+        with uniquely renamed indices (e.g. "TEAM_FG" and "OPP_FG").
+    """
+    xpath = '//table[@id="team_and_opponent"]'
+    table = get_selenium_wrapper(
+        f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html',
+        xpath
+    )
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+
+    # Read the HTML table
+    df = pd.read_html(StringIO(table))[0]
+
+    # Find where Opponent stats begin
+    opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
+
+    # Split into team portion and opponent portion
+    df_team = df[:opp_idx]
+    df_opp = df[opp_idx:]
+
+    # Determine the row labels based on data_format
+    if data_format == 'TOTALS':
+        team_row = 'Team'
+        opp_row = 'Opponent'
+    elif data_format == 'PER_GAME':
+        team_row = 'Team/G'
+        opp_row = 'Opponent/G'
+    elif data_format == 'RANK':
+        team_row = 'Lg Rank'
+        opp_row = 'Lg Rank'
+    elif data_format == 'YEAR/YEAR':
+        team_row = 'Year/Year'
+        opp_row = 'Year/Year'
+    else:
+        print('Invalid data format')
+        return pd.Series()
+
+    # Extract the row containing the team stats
+    s_team = df_team[df_team['Unnamed: 0'] == team_row]
+    s_team = s_team.drop(columns=['Unnamed: 0']).reindex()
+    s_team = pd.Series(index=s_team.columns, data=s_team.values.tolist()[0])
+
+    # Extract the row containing the opponent stats
+    s_opp = df_opp[df_opp['Unnamed: 0'] == opp_row]
+    s_opp = s_opp.drop(columns=['Unnamed: 0']).reindex()
+    s_opp = pd.Series(index=s_opp.columns, data=s_opp.values.tolist()[0])
+
+    # Rename indices to ensure uniqueness in the final Series
+    s_team.index = [f"TEAM_{col}" for col in s_team.index]
+    s_opp.index = [f"OPP_{col}" for col in s_opp.index]
+
+    # Concatenate both Series into one
+    combined_stats = pd.concat([s_team, s_opp])
+
+    return combined_stats
+
+
 def get_team_misc(team, season_end_year, data_format='TOTALS'):
     xpath = '//table[@id="team_misc"]'
     table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
