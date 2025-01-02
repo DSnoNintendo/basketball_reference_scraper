@@ -154,10 +154,3 @@ def remove_accents(name, team, season_end_year):
                 max_matches = matches
                 best_match = p
     return best_match
-
-
-def build_proxy_list():
-    proxies = os.getenv("PROXY_URLS", None)
-    if proxies is None:
-        return ValueError("'PROXY_URLS' environment variable must be ")
-    return proxies.split(",")

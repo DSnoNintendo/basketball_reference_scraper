@@ -8,7 +8,13 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
-from basketball_reference_scraper.utils import build_proxy_list
+
+def build_proxy_list():
+    proxies = os.getenv("PROXY_URLS", None)
+    if proxies is None:
+        return ValueError("'PROXY_URLS' environment variable must be ")
+    return proxies.split(",")
+
 
 options = Options()
 options.add_argument("--headless=new")
@@ -20,10 +26,9 @@ last_request = time()
 
 
 def get_selenium_wrapper(url, xpath):
-    global last_request
     # Verify last request was 3 seconds ago
     try:
-        driver.cycle_proxies() # TODO: allow no proxies
+        driver.cycle_proxies()  # TODO: allow no proxies
         driver.get(url)
         element = driver.find_element(By.XPATH, xpath)
         return f'<table>{element.get_attribute("innerHTML")}</table>'
@@ -48,3 +53,5 @@ def get_wrapper(url):
             sleep(retry_time)
         else:
             return r
+
+
