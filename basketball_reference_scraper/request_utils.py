@@ -14,7 +14,7 @@ options = Options()
 options.add_argument("--headless=new")
 driver = WebDriver(
     options=options,
-    proxies=build_proxy_list(),
+    proxies=build_proxy_list(),  # TODO: allow no proxies
 )
 last_request = time()
 
@@ -23,7 +23,7 @@ def get_selenium_wrapper(url, xpath):
     global last_request
     # Verify last request was 3 seconds ago
     try:
-        driver.cycle_proxies()
+        driver.cycle_proxies() # TODO: allow no proxies
         driver.get(url)
         element = driver.find_element(By.XPATH, xpath)
         return f'<table>{element.get_attribute("innerHTML")}</table>'
