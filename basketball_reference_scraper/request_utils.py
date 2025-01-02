@@ -53,5 +53,3 @@ def get_wrapper(url):
             sleep(retry_time)
         else:
             return r
-
-
