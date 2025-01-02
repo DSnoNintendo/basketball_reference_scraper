@@ -5,6 +5,7 @@ from time import sleep, time
 from proxy_cycling_webdriver.chrome import WebDriver
 from requests import get
 from selenium import webdriver
+from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 
@@ -27,14 +28,21 @@ last_request = time()
 
 def get_selenium_wrapper(url, xpath):
     # Verify last request was 3 seconds ago
-    try:
-        driver.cycle_proxies()  # TODO: allow no proxies
-        driver.get(url)
-        element = driver.find_element(By.XPATH, xpath)
-        return f'<table>{element.get_attribute("innerHTML")}</table>'
-    except:
-        print("Error obtaining data table.")
-        return None
+    driver.cycle_proxies()  # TODO: allow no proxies
+    while True:
+        try:
+            sleep(3)
+            print("current proxy", driver.current_proxy)
+            driver.get(url)
+            element = driver.find_element(By.XPATH, xpath)
+            return f'<table>{element.get_attribute("innerHTML")}</table>'
+        except Exception as e:
+            if len(driver.proxies) > 1:
+                print(f"Failed to get {url}. Cycling proxy")
+                driver.cycle_proxies()
+            else:
+                print(e)
+                return None
 
 
 def get_wrapper(url):
