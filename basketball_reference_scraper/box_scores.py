@@ -143,3 +143,35 @@ def get_all_star_box_score(year: int):
         return res
     else:
         raise ConnectionError("Request to basketball reference failed")
+
+
+def get_team_schedule(team: str, season_end_year: int):
+    def _date_to_dttm(date_str):
+        if date_str == "Date":
+            return
+        return datetime.strptime(date_str, "%a, %b %d, %Y")
+
+    url = "https://www.basketball-reference.com"
+
+    r = get_wrapper(f"{url}/teams/{team}/{season_end_year}_games.html")
+    box_score_links = []
+
+    if r.status_code == 200:
+        soup = BeautifulSoup(r.content, "html.parser")
+        table = soup.find("table", {"id": "games"})
+        for element in soup.find_all("td", {"data-stat": "box_score_text"}):
+            a_tag = element.find("a")
+            box_score_links.append(f"{url}{a_tag['href']}")
+
+        df = pd.read_html(StringIO(str(table)))[0]
+
+        df = df[df["G"] != "G"]
+
+        # Reset the index for a clean DataFrame
+        df.reset_index(drop=True, inplace=True)
+
+        df["Date"] = df["Date"].apply(_date_to_dttm)
+
+        print(df)
+
+        return df

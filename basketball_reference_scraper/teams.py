@@ -1,7 +1,9 @@
+from datetime import datetime
 from io import StringIO
 
 import pandas as pd
 from bs4 import BeautifulSoup
+from numpy import NaN
 
 try:
     from constants import TEAM_SETS, TEAM_TO_TEAM_ABBR
@@ -248,3 +250,37 @@ def get_team_ratings(season_end_year: int, team=[]):
         return df
     else:
         raise ConnectionError("Request to basketball reference failed")
+
+
+def get_team_schedule(team: str, season_end_year: int):
+    url = "https://www.basketball-reference.com"
+
+    r = get_wrapper(f"{url}/teams/{team}/{season_end_year}_games.html")
+    box_score_links = []
+    pd.set_option("display.max_colwidth", None)
+
+    if r.status_code == 200:
+        soup = BeautifulSoup(r.content, "html.parser")
+        table = soup.find("table", {"id": "games"})
+        for element in soup.find_all("td", {"data-stat": "box_score_text"}):
+            a_tag = element.find("a")
+            box_score_links.append(
+                f"{url}{a_tag['href']}" if element.text == "Box Score" else NaN
+            )
+
+        df = pd.read_html(StringIO(str(table)))[0]
+        df = df[df["G"] != "G"]  # remove duplicate headers
+        df = df.rename(columns={"Unnamed: 4": "Box Score"})
+
+        # Reset the index for a clean DataFrame
+        df.reset_index(drop=True, inplace=True)
+
+        df["Date"] = df["Date"].apply(
+            lambda date_str: datetime.strptime(date_str, "%a, %b %d, %Y")
+        )
+        df["Box Score"] = box_score_links
+
+        return df
+
+    else:
+        return None
