@@ -175,3 +175,26 @@ def get_team_schedule(team: str, season_end_year: int):
         print(df)
 
         return df
+
+
+def get_box_score_from_url(url: str, team1: str, team2: str, year: int):
+    r = get_wrapper(url)
+    if r.status_code == 200:
+        selectors = ["box-{}-game-advanced", "box-{}-game-basic"]
+        dfs = {team1: pd.DataFrame(), team2: pd.DataFrame()}
+
+        soup = BeautifulSoup(r.content, "html.parser")
+        for selector in selectors:
+            for team in [team1, team2]:
+                selector = selector.format(team)
+                table = soup.find("table", {"id": selector})
+                raw_df = pd.read_html(StringIO(str(table)))[0]
+                df = _process_box(raw_df)
+                df["PLAYER"] = df["PLAYER"].apply(
+                    lambda name: remove_accents(name, team, year)
+                )
+                dfs[team] = pd.concat([dfs.get(team), df], axis=1)
+
+        return dfs
+    else:
+        raise ConnectionError("Request to basketball reference failed")
