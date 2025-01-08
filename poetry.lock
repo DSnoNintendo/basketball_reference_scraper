@@ -962,7 +962,7 @@ type = ["mypy (>=1.11.2)"]
 
 [[package]]
 name = "proxy-cycling-webdriver"
-version = "1.0.1"
+version = "1.0.2"
 description = "Selenium webdriver that will dynamically cycle given proxies when making requests"
 optional = false
 python-versions = "^3.8"
@@ -977,7 +977,7 @@ selenium-wire = "^5.1.0"
 type = "git"
 url = "https://github.com/DSnoNintendo/proxy-cycling-webdriver"
 reference = "HEAD"
-resolved_reference = "8a5aa884672a223d6e0ae5a67371c34ecbd02b51"
+resolved_reference = "71727dfe64504583a0dbc045808c876c4e39987d"
 
 [[package]]
 name = "pyasn1"
