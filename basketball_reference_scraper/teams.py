@@ -271,6 +271,8 @@ def get_team_schedule(team: str, season_end_year: int):
         df = pd.read_html(StringIO(str(table)))[0]
         df = df[df["G"] != "G"]  # remove duplicate headers
         df = df.rename(columns={"Unnamed: 4": "Box Score"})
+        df = df.rename(columns={"Unnamed: 5": "Home/Away"})
+        df = df.rename(columns={"Unnamed: 7": "W/L"})
 
         # Reset the index for a clean DataFrame
         df.reset_index(drop=True, inplace=True)
