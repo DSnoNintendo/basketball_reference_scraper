@@ -110,14 +110,12 @@ def get_opp_stats(team, season_end_year, data_format="PER_GAME"):
 
 
 def get_team_and_opp_stats(team, season_end_year, data_format="TOTALS"):
-    r = get_wrapper(f"https://www.basketball-reference.com/teams/{team}/{season_end_year}.html")
-
-    if r.status_code == 200:
-        print(r.content)
-        soup = BeautifulSoup(r.content, "lxml")
-        table = soup.find("table", {"id": "team_and_opponent", "class": "sortable stats_table"})
-        print(table)
-    else:
+    xpath = '//table[@id="team_and_opponent"]'
+    table = get_selenium_wrapper(
+        f"https://www.basketball-reference.com/teams/{team}/{season_end_year}.html",
+        xpath,
+    )
+    if not table:
         raise ConnectionError("Request to basketball reference failed")
 
     # Read the HTML table
