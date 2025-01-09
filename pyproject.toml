@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "basketball-reference-scraper"
-version = "3.0.2"
+version = "3.0.3"
 description = ""
 authors = [
     "Vishaal Agartha <vishaalagartha@gmail.com>",
