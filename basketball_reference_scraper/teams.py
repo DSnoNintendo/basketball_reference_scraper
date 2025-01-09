@@ -113,6 +113,7 @@ def get_team_and_opp_stats(team, season_end_year, data_format="TOTALS"):
     r = get_wrapper(f"https://www.basketball-reference.com/teams/{team}/{season_end_year}.html")
 
     if r.status_code == 200:
+        print(r.content)
         soup = BeautifulSoup(r.content, "html.parser")
         table = soup.find("table", {"id": "team_and_opponent"})
         print(table)
