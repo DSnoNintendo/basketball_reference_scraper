@@ -977,7 +977,7 @@ selenium-wire = "^5.1.0"
 type = "git"
 url = "https://github.com/DSnoNintendo/proxy-cycling-webdriver"
 reference = "HEAD"
-resolved_reference = "71727dfe64504583a0dbc045808c876c4e39987d"
+resolved_reference = "3037463b1719c7b93103ef2544138f16b30b1119"
 
 [[package]]
 name = "pyasn1"
