@@ -115,7 +115,7 @@ def get_team_and_opp_stats(team, season_end_year, data_format="TOTALS"):
     if r.status_code == 200:
         print(r.content)
         soup = BeautifulSoup(r.content, "html.parser")
-        table = soup.find("table", {"id": "team_and_opponent"})
+        table = soup.find("table", {"id": "team_and_opponent", "class": "sortable stats_table"})
         print(table)
     else:
         raise ConnectionError("Request to basketball reference failed")
