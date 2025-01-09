@@ -28,7 +28,8 @@ last_request = time()
 
 def get_selenium_wrapper(url, xpath):
     # Verify last request was 3 seconds ago
-    driver.cycle_proxies()  # TODO: allow no proxies
+    if len(driver.proxies):
+        driver.cycle_proxies()
     while True:
         try:
             sleep(3)
