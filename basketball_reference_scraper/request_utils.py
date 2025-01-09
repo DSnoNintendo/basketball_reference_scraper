@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 def build_proxy_list():
     proxies = os.getenv("PROXY_URLS", None)
     if proxies is None:
-        return ValueError("'PROXY_URLS' environment variable must be ")
+        return ValueError("'PROXY_URLS' environment variable must be set")
     return proxies.split(",")
 
 
