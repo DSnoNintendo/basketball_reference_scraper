@@ -159,7 +159,7 @@ def get_team_schedule(team: str, season_end_year: int):
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, "html.parser")
         table = soup.find("table", {"id": "games"})
-        for element in soup.find_all("td", {"data-stat": "box_score_text"}):
+        for element in table.find_all("td", {"data-stat": "box_score_text"}):
             a_tag = element.find("a")
             box_score_links.append(f"{url}{a_tag['href']}")
 
@@ -171,8 +171,6 @@ def get_team_schedule(team: str, season_end_year: int):
         df.reset_index(drop=True, inplace=True)
 
         df["Date"] = df["Date"].apply(_date_to_dttm)
-
-        print(df)
 
         return df
 
@@ -193,6 +191,9 @@ def get_box_score_from_url(url: str, team1: str, team2: str, year: int):
                 df["PLAYER"] = df["PLAYER"].apply(
                     lambda name: remove_accents(name, team, year)
                 )
+                df["PLAYER_ID"] = [
+                    element.get("data-append-csv") for element in table.find_all("th", {"player": "box_score_text"})
+                ]
                 dfs[team] = pd.concat([dfs.get(team), df], axis=1)
 
         return dfs
