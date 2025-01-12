@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "basketball-reference-scraper"
-version = "3.0.6"
+version = "3.0.7"
 description = ""
 authors = [
     "Vishaal Agartha <vishaalagartha@gmail.com>",
@@ -38,6 +38,7 @@ black = "^24.10.0"
 isort = "^5.13.2"
 proxy-cycler = { git = "https://github.com/DSnoNintendo/proxy-cycler/" }
 selenium-wire = "^5.1.0"
+blinker = "1.7.0"
 
 [build-system]
 requires = ["poetry-core"]
