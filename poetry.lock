@@ -86,13 +86,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "blinker"
-version = "1.7.0"
+version = "1.9.0"
 description = "Fast, simple object-to-object and broadcast signaling"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 files = [
-    {file = "blinker-1.7.0-py3-none-any.whl", hash = "sha256:c3f865d4d54db7abc53758a01601cf343fe55b84c1de4e3fa910e420b438d5b9"},
-    {file = "blinker-1.7.0.tar.gz", hash = "sha256:e6820ff6fa4e4d1d8e2747c2283749c3f547e4fee112b98555cdcdae32996182"},
+    {file = "blinker-1.9.0-py3-none-any.whl", hash = "sha256:ba0efaa9080b619ff2f3459d1d500c57bddea4a6b424b60a91141db6fd2f08bc"},
+    {file = "blinker-1.9.0.tar.gz", hash = "sha256:b4ce2265a7abece45e7cc896e98dbebe6cead56bcf805a3d23136d145f5445bf"},
 ]
 
 [[package]]
@@ -961,23 +961,19 @@ test = ["appdirs (==1.4.4)", "covdefaults (>=2.3)", "pytest (>=8.3.2)", "pytest-
 type = ["mypy (>=1.11.2)"]
 
 [[package]]
-name = "proxy-cycling-webdriver"
-version = "1.0.2"
-description = "Selenium webdriver that will dynamically cycle given proxies when making requests"
+name = "proxy-cycler"
+version = "1.0.0"
+description = "A simple tool for using a collection of proxies with the Python requests library"
 optional = false
-python-versions = "^3.8"
+python-versions = "^3.00"
 files = []
 develop = false
 
-[package.dependencies]
-blinker = "=1.7"
-selenium-wire = "^5.1.0"
-
 [package.source]
 type = "git"
-url = "https://github.com/DSnoNintendo/proxy-cycling-webdriver"
+url = "https://github.com/DSnoNintendo/proxy-cycler/"
 reference = "HEAD"
-resolved_reference = "3037463b1719c7b93103ef2544138f16b30b1119"
+resolved_reference = "6d714b678b339c9bc23dbcaff9320ada6bc22145"
 
 [[package]]
 name = "pyasn1"
@@ -1036,13 +1032,13 @@ test = ["pretend", "pytest (>=3.0.1)", "pytest-rerunfailures"]
 
 [[package]]
 name = "pyparsing"
-version = "3.2.0"
+version = "3.2.1"
 description = "pyparsing module - Classes and methods to define and execute parsing grammars"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "pyparsing-3.2.0-py3-none-any.whl", hash = "sha256:93d9577b88da0bbea8cc8334ee8b918ed014968fd2ec383e868fb8afb1ccef84"},
-    {file = "pyparsing-3.2.0.tar.gz", hash = "sha256:cbf74e27246d595d9a74b186b810f6fbb86726dbf3b9532efb343f6d7294fe9c"},
+    {file = "pyparsing-3.2.1-py3-none-any.whl", hash = "sha256:506ff4f4386c4cec0590ec19e6302d3aedb992fdc02c761e90416f158dacf8e1"},
+    {file = "pyparsing-3.2.1.tar.gz", hash = "sha256:61980854fd66de3a90028d679a954d5f2623e83144b5afe5ee86f43d762e5f0a"},
 ]
 
 [package.extras]
@@ -1442,4 +1438,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "63c79e35e33bab8c4552d9c6c7e7724f8b0cc813c9ad0422497dbbe339cef5f2"
+content-hash = "8f6560b9f864efd7419b839d8c9378db2ced2bac61143fa328f519773f234e5d"

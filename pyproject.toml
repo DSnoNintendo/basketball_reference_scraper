@@ -36,7 +36,8 @@ selenium = "^4.27.1"
 html5lib = "^1.1"
 black = "^24.10.0"
 isort = "^5.13.2"
-proxy-cycling-webdriver = { git = "https://github.com/DSnoNintendo/proxy-cycling-webdriver" }
+proxy-cycler = { git = "https://github.com/DSnoNintendo/proxy-cycler/" }
+selenium-wire = "^5.1.0"
 
 [build-system]
 requires = ["poetry-core"]
