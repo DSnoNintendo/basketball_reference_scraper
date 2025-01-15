@@ -2,6 +2,7 @@ import os
 from os import getenv
 from time import sleep, time
 
+from proxy_cycler import ProxyCycler
 from proxy_cycling_webdriver.chrome import WebDriver
 from requests import get
 from selenium import webdriver
@@ -23,8 +24,7 @@ driver = WebDriver(
     options=options,
     proxies=build_proxy_list(),  # TODO: allow no proxies
 )
-last_request = time()
-
+requests_proxy_cycler = ProxyCycler(build_proxy_list())
 
 def get_selenium_wrapper(url, xpath):
     # Verify last request was 3 seconds ago
@@ -47,18 +47,11 @@ def get_selenium_wrapper(url, xpath):
 
 
 def get_wrapper(url):
-    global last_request
-    # Verify last request was 3 seconds ago
-    if 0 < time() - last_request < 3:
-        sleep(3)
-    last_request = time()
-    r = get(url)
     while True:
+        r = get(url, proxies=requests_proxy_cycler.cycle_proxies())
         if r.status_code == 200:
             return r
         elif r.status_code == 429:
-            retry_time = int(r.headers["Retry-After"])
-            print(f"Retrying after {retry_time} sec...")
-            sleep(retry_time)
+            print(f"Error code {r.status_code}. Cycling proxies")
         else:
             return r
